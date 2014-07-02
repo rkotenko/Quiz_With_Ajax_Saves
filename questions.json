@@ -19,6 +19,6 @@ allQuestions = [{
                    {
 	question: "What is the name of the planet closest to the Sun?", 
 	choices: ["Pluto", "Mars", "Earth", "Mercury"], 
-	correctAnswer:4,
+	correctAnswer:3,
     chosenAnswer: null
 }];
