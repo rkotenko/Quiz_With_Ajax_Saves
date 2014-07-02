@@ -1,0 +1,18 @@
+.answer{
+    overflow: hidden;
+}
+
+#next{
+	float: right;
+}
+#quiz {
+    border: 1px solid #000;
+    width: 500px;
+    height: 500px
+}
+.selected {
+    background-color: blue;
+}
+
+
+
