@@ -5,11 +5,20 @@
 #next{
 	float: right;
 }
+
+#num_correct, #percent{
+	text-align: center;
+}
+
 #quiz {
     border: 1px solid #000;
     width: 500px;
-    height: 500px
+    overflow: hidden;
 }
+
+#results{
+	width: 500px;
+	
 .selected {
     background-color: blue;
 }
