@@ -6,22 +6,25 @@
 	float: right;
 }
 
-#num_correct, #percent{
+.results div{
 	text-align: center;
 }
 
-#quiz {
-    border: 1px solid #000;
+.main {
     width: 500px;
     overflow: hidden;
 }
 
-#results{
-	width: 500px;
-	
 .selected {
     background-color: blue;
 }
 
+.login input{
+	float: right;
+}
+
+.login{
+	width: 250px
+}
 
 

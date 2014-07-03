@@ -1,12 +1,15 @@
 $('#document').ready(function() {
 	var i = 0;  // question count
-	doPrep();	// doPrep does all the initial work, applying events and hiding certain things
+	
+	// load the login page and run its setup function.  
+	loadLogin();
 
-	// set up the initial question
-	setUpQuestion();
 
+	/***************** Functions ********************/
 
-	/*************** Functions ********************/
+	function checkCredentials(){
+		loadQuizPage();
+	}
 
 	function displayResults() {
 		// first hide the question div
@@ -27,19 +30,70 @@ $('#document').ready(function() {
 		$('#results').fadeIn('slow');
 	}
 
-	function doPrep(){
-		$('#next').click(nextQuestion);
-		$('#next').prop('disabled', true);
-		$('#results').css('display', 'none');  //hide the results div to start
-		$('#back').click(previousQuestion);
-		$('#back').css('display', 'none'); // hide the back button on first page
+	/*
+		Load the login page and apply the login button click event
+	*/
 
-		// add an onchange event to the quiz div that holds the questions
-		// Since the only thing that changes are the radio buttons, any change on the div mean
-		// on was selected and the next button can be enabled
-		$('#quiz').change(function(){
-			$('#next').prop('disabled', false);
+	function loadLogin(){
+		$('body').load('templates/login.html', function(){
+			$('#login_button').click(checkCredentials);	
 		});
+		
+		
+	}
+
+	function loadQuestion(){
+	
+		answer = allQuestions[i].chosenAnswer;
+	
+		// disable the next button if the question is unanswered. Make sure it is enabled
+		// if there was an answer given
+		// also mark a radio button as checked if the answer is present
+		if(answer === null){
+			$('#next').prop('disabled', true);
+		}else {
+			$('#next').prop('disabled', false);
+			$('#' + answer).prop('checked', true);	
+		}
+	
+		// insert the question and answers into the page
+		$('#question').html(allQuestions[i].question);
+
+		// only four possible answers so use 4 for the loop
+		for(var j = 0; j < 4;j++){
+			$('#' + j + '_label').html(allQuestions[i].choices[j]);
+		}
+		
+		$('#quiz').fadeIn('slow');
+	}
+
+	/*
+		Loads the html for the quiz page and sets up some events and properties on it
+	*/
+
+	function loadQuizPage(){
+
+		// load the question html
+		$('body').load('templates/quiz.html', function(){
+			$('#quiz').css('display', 'none');
+			$('#next').click(nextQuestion);
+			$('#next').prop('disabled', true);
+			$('#results').css('display', 'none');  //hide the results div to start
+			$('#back').click(previousQuestion);
+			$('#back').css('display', 'none'); // hide the back button on first page
+
+			// add an onchange event to the quiz div that holds the questions
+			// Since the only thing that changes are the radio buttons, any change on the div mean
+			// on was selected and the next button can be enabled
+			$('#quiz').change(function(){
+				$('#next').prop('disabled', false);
+			});
+			
+			// now load the question
+			loadQuestion();	
+		});
+		
+
 	}
 
 	function nextQuestion()
@@ -65,44 +119,20 @@ $('#document').ready(function() {
 		if(i > allQuestions.length - 1) {
 			$('#quiz').fadeOut('slow', displayResults);
 		} else {
-			$('#quiz').fadeOut('slow', setUpQuestion);
+			$('#quiz').fadeOut('slow', loadQuestion);
 		}
 	}
 
 	function previousQuestion(){
 		i--;  // remove one from the question count
 	
-		if(i == 0){
+		if(i === 0){
 			$('#back').css('display', 'none');
 		}
 		
 		// fade out the question div and set up the next question
-		$('#quiz').fadeOut('slow', setUpQuestion);
+		$('#quiz').fadeOut('slow', loadQuestion);
 		
 	}
-
-	function setUpQuestion(){
 	
-		answer = allQuestions[i].chosenAnswer;
-	
-		// disable the next button if the question is unanswered. Make sure it is enabled
-		// if there was an answer given
-		// also mark a radio button as checked if the answer is present
-		if(answer == null){
-			$('#next').prop('disabled', true);
-		}else {
-			$('#next').prop('disabled', false);
-			$('#' + answer).prop('checked', true);	
-		}
-	
-		// insert the question and answers into the page
-		$('#question').html(allQuestions[i].question);
-
-		// only four possible answers so use 4 for the loop
-		for(var j = 0; j < 4;j++){
-			$('#' + j + '_label').html(allQuestions[i].choices[j]);
-		}
-		
-		$('#quiz').fadeIn('slow');
-	}
 });
