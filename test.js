@@ -12,22 +12,25 @@ $('#document').ready(function() {
 	}
 
 	function displayResults() {
-		// first hide the question div
-		$('#quiz').css('display', 'none');
-	
-		// compute the results
-		var total = 0;
-		var length = allQuestions.length;
-	
-		for(var j = 0; j < length; j++){
-			if(allQuestions[j].chosenAnswer == allQuestions[j].correctAnswer){
-				total++;
+		$('body').load('templates/results.html', function(){
+			// first hide the question div
+			$('#quiz').css('display', 'none');
+		
+			// compute the results
+			var total = 0;
+			var length = allQuestions.length;
+		
+			for(var j = 0; j < length; j++){
+				if(allQuestions[j].chosenAnswer == allQuestions[j].correctAnswer){
+					total++;
+				}
 			}
-		}
-	
-		$('#num_correct').html(total + ' out of ' + length + ' correct');
-		$('#percent').html((total / length) * 100 + '%');		
-		$('#results').fadeIn('slow');
+		
+			$('#num_correct').html(total + ' out of ' + length + ' correct');
+			$('#percent').html((total / length) * 100 + '%');		
+			$('#results').fadeIn('slow');	
+		});		
+		
 	}
 
 	/*
@@ -42,6 +45,12 @@ $('#document').ready(function() {
 		
 	}
 
+	/*
+		Loads the question text and answers onto the page.  Sets the proper radio
+		button to checked.  Disables the next button if no answer has been given yet,
+		enables if it has.
+	*/
+
 	function loadQuestion(){
 	
 		answer = allQuestions[i].chosenAnswer;
@@ -49,6 +58,7 @@ $('#document').ready(function() {
 		// disable the next button if the question is unanswered. Make sure it is enabled
 		// if there was an answer given
 		// also mark a radio button as checked if the answer is present
+		// this is needed for to allow for back and forward movement
 		if(answer === null){
 			$('#next').prop('disabled', true);
 		}else {
@@ -96,6 +106,11 @@ $('#document').ready(function() {
 
 	}
 
+	/*
+		Records the user's answer in the current question's array and increments the counter
+		Goes to displayResults if the questions have been exhausted, loadQuestion if not
+	*/
+
 	function nextQuestion()
 	{
 		// reveal the back button.  Really should check if necessary but impact is minimal
@@ -122,6 +137,10 @@ $('#document').ready(function() {
 			$('#quiz').fadeOut('slow', loadQuestion);
 		}
 	}
+
+	/*
+		Goes to previous counter by decrementing the counter and hiding the back button if necessary
+	*/
 
 	function previousQuestion(){
 		i--;  // remove one from the question count
