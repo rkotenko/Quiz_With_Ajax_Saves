@@ -1,9 +1,6 @@
 $('#document').ready(function() {
 	var i = 0;  // question count
 
-	// create a "user" for testing htmlStorage.  Not meant to be secure AT ALL.
-	localStorage.setItem('rob', 'pass');
-	
 	// load the login page and run its setup function.  
 	loadLogin();
 
