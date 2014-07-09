@@ -1,5 +1,8 @@
 $('#document').ready(function() {
 	var i = 0;  // question count
+
+	// create a "user" for testing htmlStorage.  Not meant to be secure AT ALL.
+	localStorage.setItem('rob', 'pass');
 	
 	// load the login page and run its setup function.  
 	loadLogin();
@@ -8,7 +11,16 @@ $('#document').ready(function() {
 	/***************** Functions ********************/
 
 	function checkCredentials(){
-		loadQuizPage();
+		// check the login against what is stored in localStorage.  COMPLETELY unsafe but this is just
+		// to experiement with localStorage since I have never used it for anything
+		if($('#password').val() == localStorage.getItem($('#name').val())){
+			loadQuizPage();	
+		}
+		else{
+			// show error
+			$('#error').html("Your credentials are not correct");
+		}
+		
 	}
 
 	function displayResults() {
@@ -61,6 +73,7 @@ $('#document').ready(function() {
 		// this is needed for to allow for back and forward movement
 		if(answer === null){
 			$('#next').prop('disabled', true);
+			$('.answer').prop('checked', false);
 		}else {
 			$('#next').prop('disabled', false);
 			$('#' + answer).prop('checked', true);	
@@ -84,7 +97,7 @@ $('#document').ready(function() {
 	function loadQuizPage(){
 
 		// load the question html
-		$('body').load('templates/quiz.html', function(){
+		$('body').load('templates/question.html', function(){
 			$('#quiz').css('display', 'none');
 			$('#next').click(nextQuestion);
 			$('#next').prop('disabled', true);
@@ -95,8 +108,10 @@ $('#document').ready(function() {
 			// add an onchange event to the quiz div that holds the questions
 			// Since the only thing that changes are the radio buttons, any change on the div mean
 			// on was selected and the next button can be enabled
-			$('#quiz').change(function(){
+			// also store the checked radio button id into the current question answer
+			$('#quiz').change(function(event){
 				$('#next').prop('disabled', false);
+				allQuestions[i].chosenAnswer = event.target.id;
 			});
 			
 			// now load the question
@@ -117,14 +132,14 @@ $('#document').ready(function() {
 		$('#back').css('display', 'inline-block');
 	
 		// place the selected answer into the chosenAnswer field of the question
-		for(var j = 0; j < 4;j++){
+		/*for(var j = 0; j < 4;j++){
 			if($('#' + j).prop('checked')) {
 				allQuestions[i].chosenAnswer = j;
 			
 				// uncheck the radio button to get ready for the next question
 				$('#' + j).prop('checked', false);
 			}
-		}
+		}*/
 	
 	
 		// check if the all questions have been used. If not, set up next one.
