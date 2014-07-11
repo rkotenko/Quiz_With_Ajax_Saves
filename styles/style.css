@@ -2,6 +2,10 @@
     overflow: hidden;
 }
 
+body > div{
+	width: 500px;
+}
+
 #next{
 	float: right;
 }
@@ -23,8 +27,5 @@
 	float: right;
 }
 
-.login{
-	width: 250px
-}
 
 
