@@ -21,21 +21,20 @@ User.prototype = {
 		choices: an array of possible answers
 */
 
-function Question(text, choices, correct_answer) {
+function Question(text, choices, correctAnswer) {
 	var self = this;
 	this.text = text;
 	this.choices = choices;
-	this.correct_answer = correct_answer;
-	this.user_answer = null;
+	this.correctAnswer = correctAnswer;
+	this.userAnswer = null;
 }	
 
 Question.prototype = {
 	constructor: Question,
 	isUserCorrect: function() {
-		return this.correct_answer == this.user_answer;
+		return this.correctAnswer == this.userAnswer;
 	},
 	insertQuestion: function() {
-
 		$('#question').html(this.text);
 
 		for(var i = 0;i < this.choices.length;i++){
@@ -43,14 +42,91 @@ Question.prototype = {
 		}
 	},
 	display: function() {
+		var that = this;  // save a reference to the question so it can be used in load and the change function
+
 		// check if the quiz div is present, if not, load it, otherwise call insertQuestion
 		if($('#quiz').length) {
 			this.insertQuestion();
 		}
 		else {
-			// proxy ensures the insertQuestion is called using question as context, not the calling element
-			$('#main').load('templates/question.html', $.proxy(this.insertQuestion, this));  
-			i = 0;
+			$('#main').load('templates/question.html', function(){
+				$('#quiz').change(function(event){
+					$('#next').prop('disabled', false);
+					that.userAnswer = event.target.id;
+				});
+
+				that.insertQuestion();
+			});  
 		}
 	}
 };
+
+/*
+	Quiz Object
+		The workhorse of the application.  Controls navigation including moving to previous and next questions
+		and displaying the results.
+		
+*/
+
+function Quiz() {
+	this.current = -1;  // the first question is not loaded upon initialization
+}
+
+Quiz.prototype = {
+	constructor: Quiz,
+	previousQuestion: function(){
+		this.current--;
+		$('#next').prop('disabled', false);
+
+		if(this.current === 0){
+			$('#back').css('display', 'none');
+		}
+
+		$('#' + questions[this.current].userAnswer).prop('checked', true);
+		questions[this.current].display();
+	},
+	nextQuestion: function(){
+		this.current++;
+
+		if(this.current === questions.length){
+			this.loadResults();
+		}
+		else{
+			if(questions[this.current].userAnswer === null){
+				$('#next').prop('disabled', true);
+				$('.answer').prop('checked', false);
+			}
+			else{
+				$('#' + questions[this.current].userAnswer).prop('checked', true);	
+			}
+
+			if(this.current > 0){
+				$('#back').css('display', 'inline-block');
+			}
+
+			questions[this.current].display();
+		}
+		
+
+	},
+	insertResults: function(){
+		$questions = $(questions);
+		correct = $questions.filter(function(){
+			return this.isUserCorrect();
+		});	
+
+		$('#num_correct').html(correct.length + ' out of ' + questions.length + ' correct');
+		$('#percent').html((correct.length / questions.length) * 100 + '%');
+	},
+	loadResults: function(){
+		var that = this;
+
+		if($('#results').length){
+			this.insertResults();	
+		}else {
+			$('#main').load('templates/results.html', that.insertResults);
+		}
+	}
+};
+
+

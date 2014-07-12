@@ -1,24 +1,20 @@
 allQuestions = [{
 	question: "Who is Prime Minister of the United Kingdom?", 
 	choices: ["David Cameron", "Gordon Brown", "Winston Churchill", "Tony Blair"], 
-	correctAnswer:0,
-    chosenAnswer: null
+	correctAnswer:0
 },
                    {
 	question: "What is 2 times 5?", 
 	choices: [1000, 2, 5, 10], 
-	correctAnswer:3,
-    chosenAnswer: null
+	correctAnswer:3
 },
                    {
 	question: "When is New Year's?", 
 	choices: ["Feb 1", "March 5", "Jan 1", "Oct 31"], 
-	correctAnswer:2,
-    chosenAnswer: null
+	correctAnswer:2
 },
                    {
 	question: "What is the name of the planet closest to the Sun?", 
 	choices: ["Pluto", "Mars", "Earth", "Mercury"], 
-	correctAnswer:3,
-    chosenAnswer: null
+	correctAnswer:3
 }];
