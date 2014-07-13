@@ -1,0 +1,3 @@
+var quiz;
+
+startQuiz();

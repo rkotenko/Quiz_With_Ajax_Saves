@@ -22,7 +22,6 @@ User.prototype = {
 */
 
 function Question(text, choices, correctAnswer) {
-	var self = this;
 	this.text = text;
 	this.choices = choices;
 	this.correctAnswer = correctAnswer;
@@ -40,24 +39,37 @@ Question.prototype = {
 		for(var i = 0;i < this.choices.length;i++){
 			$('#' + i + '_label').html(this.choices[i]);
 		}
+
+		if(this.userAnswer !== null){
+			$('#' + this.userAnswer).prop('checked', true);
+		}
+		else{
+			$('.answer').prop('checked', false);
+		}
+
+		$('#main').fadeIn('slow');
 	},
 	display: function() {
-		var that = this;  // save a reference to the question so it can be used in load and the change function
-
+		var that = this;  // save a reference to the question so it can be used in load function
+		
 		// check if the quiz div is present, if not, load it, otherwise call insertQuestion
-		if($('#quiz').length) {
-			this.insertQuestion();
-		}
-		else {
-			$('#main').load('templates/question.html', function(){
-				$('#quiz').change(function(event){
-					$('#next').prop('disabled', false);
-					that.userAnswer = event.target.id;
-				});
+		$('#main').fadeOut('slow', function(){
+			if($('#quiz').length) {
+				questions[quiz.current].insertQuestion();
+			}
+			else {
+				$('#main').load('templates/question.html', function(){
+					$('#quiz').change(function(event){
+						$('#next').prop('disabled', false);
+						// can't use this since the context is #main
+						questions[quiz.current].userAnswer = event.target.id;
+					});
 
-				that.insertQuestion();
-			});  
-		}
+					that.insertQuestion();
+				});  
+			}	
+		});
+		
 	}
 };
 
@@ -74,7 +86,7 @@ function Quiz() {
 
 Quiz.prototype = {
 	constructor: Quiz,
-	previousQuestion: function(){
+	previousQuestion: function(event){
 		this.current--;
 		$('#next').prop('disabled', false);
 
@@ -82,10 +94,10 @@ Quiz.prototype = {
 			$('#back').css('display', 'none');
 		}
 
-		$('#' + questions[this.current].userAnswer).prop('checked', true);
 		questions[this.current].display();
 	},
-	nextQuestion: function(){
+	nextQuestion: function(event){
+		var quizDiv = $('#quiz');
 		this.current++;
 
 		if(this.current === questions.length){
@@ -94,13 +106,12 @@ Quiz.prototype = {
 		else{
 			if(questions[this.current].userAnswer === null){
 				$('#next').prop('disabled', true);
-				$('.answer').prop('checked', false);
-			}
-			else{
-				$('#' + questions[this.current].userAnswer).prop('checked', true);	
 			}
 
-			if(this.current > 0){
+			if(this.current === 0){
+				$('#next').css('display', 'inline-block');
+			}
+			else if(this.current > 0){
 				$('#back').css('display', 'inline-block');
 			}
 
@@ -120,6 +131,8 @@ Quiz.prototype = {
 	},
 	loadResults: function(){
 		var that = this;
+		$('#back').css('display', 'none');
+		$('#next').css('display', 'none');
 
 		if($('#results').length){
 			this.insertResults();	
