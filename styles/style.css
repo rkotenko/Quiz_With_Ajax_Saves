@@ -10,10 +10,19 @@ body input[type="text"]{
 	float: right;
 }
 
-.results div{
+.results div, .scores{
 	text-align: center;
 }
 
+.scores{
+	border: 1px solid #000;
+	margin-top: 5px;
+}
+
+table{
+	width: 100%;
+	border: 1px solid #000;
+}
 
 
 

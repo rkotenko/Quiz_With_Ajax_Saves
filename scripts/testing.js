@@ -78,6 +78,13 @@ test('displayQuestion', function() {
 	equal($('#next').prop('disabled'), false, 'Next button should be enabled');	
 });
 
+test('Dislpay Top Scores', function(){
+	player.displayUserScores();
+	user_score = $('#user_score');
+	ok($('#user_score').length, 'User score div is present');
+	equal($('#user_score').children(':nth-child(2)'), '2 out of 4', 'User scores are not present');
+});
+
 /*
 	Quiz Needed Tests:
 		First question: loads the question html, next is disabled, back is hidden, first question is loaded

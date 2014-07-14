@@ -34,7 +34,7 @@ function startQuiz(){
 	// turn off jquery effects for testing.  They don't need to be tested. That way I don't have to run async tests.  That means faster tests.
 	// faster tests equals YAY FOR ME!
 	$.fx.off = true;
-	
+
 	// hide the back and next buttons
 	next = $('#next');
 	back = $('#back');
@@ -185,3 +185,30 @@ Quiz.prototype = {
 		$('#main').html(html);
 	}
 };
+
+/*
+	Top Scores Object
+		Holds the highest 20 scores. Can set those scorse to template, determine if a score should be added to the list, and add 
+		it
+		topScores is of the format [{name: "name", score: "score"}, {name: "name", score: "scores"}
+*/
+function TopScores() {
+	this.topScores = this.getTopScores();  
+}
+
+TopScores.prototype = {
+	getTopScores: function(){
+
+	},
+	checkScore: function(){
+
+	},
+	displayScores: function(){
+
+	},
+	saveScores: function(){
+		
+	}
+};
+
+
