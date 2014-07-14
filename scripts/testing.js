@@ -1,5 +1,5 @@
-// in order to test the flow of the quiz, I need to save the states so they can be passed to the next tests
-var state;
+
+var state; // in order to test the flow of the quiz, I need to save the states so they can be passed to the next tests
 var qState;  //  a special state saved to jump right into the question
 var quiz = new Quiz();
 var questions = [];
@@ -78,7 +78,7 @@ asyncTest('displayQuestion', function() {
 		equal(questions[0].userAnswer, 0, 'Answer should be set to 0');
 		equal($('#next').prop('disabled'), false, 'Next button should be enabled');
 		start();	
-	}, 1000);
+	}, 600);
 	
 });
 
@@ -113,9 +113,9 @@ asyncTest('Load first question', function(){
 		equal(next.prop('disabled'), true, 'Next button should be disabled');
 		equal(back.css('display'), 'none', 'Back button should be hidden');
 		equal($('#question').html(), questions[0].text, 'Question text should be: ' + questions[0].text);
-		state = $('#qunit-fixture').find("*");  // save the state of the inside of qunit-fixture for the next test
+		state = $('#contain').detach();  // save the state of the inside of qunit-fixture for the next test
 		start();
-	}, 1000);
+	}, 600);
 });
 
 // set an answer for the current question, enable the next button, check the radio button, and load the next one
@@ -129,9 +129,6 @@ asyncTest('load second question', function(){
 	quiz.nextQuestion();
 
 	setTimeout(function(){
-		state = $('#qunit-fixture').find("*");  // save the state of the inside of qunit-fixture for the next test
-		qState = state.find('#main');
-
 		deepEqual(quiz.current, 1, 'Call to next question should result in current being set to 1');
 
 		// next should be disabled
@@ -149,8 +146,11 @@ asyncTest('load second question', function(){
 
 		// check that the question for the second one is set
 		equal($('#question').html(), questions[1].text, 'Question text should be: ' + questions[1].text);	
+
+		state = $('#contain').detach();  // save the state of the inside of qunit-fixture for the next test
+		qState = state.find('#main');
 		start();
-	}, 1000);
+	}, 600);
 	
 });
 
@@ -160,7 +160,7 @@ asyncTest('previous question', function(){
 	quiz.previousQuestion();
 
 	setTimeout(function(){
-		state = $('#qunit-fixture').find("*");  // save the state of the inside of qunit-fixture for the next test
+		
 
 		deepEqual(quiz.current, 0, 'Call to previous question should result in current being set to 0');
 
@@ -168,8 +168,9 @@ asyncTest('previous question', function(){
 		equal($('#next').prop('disabled'), false, 'Question has an answer so next should be enabled');
 		equal($('#back').css('display'), 'none', 'Back needs to be hidden on first question');
 		equal($('#question').html(), questions[0].text, 'Question text should be: ' + questions[0].text);	
+		state = $('#contain').detach();  // save the state of the inside of qunit-fixture for the next test
 		start();
-	}, 1000);
+	}, 600);
 	
 });
 
@@ -181,9 +182,9 @@ asyncTest('next question with answer set', function(){
 	quiz.nextQuestion();
 
 	setTimeout(function(){
-		state = $('#qunit-fixture').find("*");  // save the state of the inside of qunit-fixture for the next test
-
+		
 		equal($('#1').prop('checked'), true, 'User answer for question 1 is 1 and so its radio box should be checked');	
+		state = $('#contain').detach();  // save the state of the inside of qunit-fixture for the next test
 		start();
 	}, 1500);
 	
@@ -209,9 +210,9 @@ asyncTest('display results: all correct', function(){
 		equal($('#percent').html(), '100%', 'Should be 100%');
 		equal($('#back').css('display'), 'none');
 		equal($('#next').css('display'), 'none');
-		state = $('#qunit-fixture').find("*");  // save the state of the inside of qunit-fixture for the next test
+		state = $('#contain').detach();  // save the state of the inside of qunit-fixture for the next test
 		start();
-	}, 1000);
+	}, 600);
 });
 
 
@@ -227,7 +228,7 @@ asyncTest('display results: 2 correct', function(){
 		equal($('#num_correct').html(), '2 out of 4 correct', 'All answers are correct so this should be 2 out of 4');
 		equal($('#percent').html(), '50%', 'Should be 50%');	
 		start();
-	}, 1000);
+	}, 600);
 	
 });
 
@@ -248,15 +249,12 @@ module('Main Page Test');
 asyncTest('startQuiz', function(){
 	startQuiz();
 	
-
-	setTimeout(function(){
-		ok($('#name').length, ' name input is present');
-		ok($('#password').length, ' name input is present');
-		equal($('#back').css('display'), 'none');
-		equal($('#next').css('display'), 'none');
-		state = $('#qunit-fixture').find("*");  // save the state of the inside of qunit-fixture for the next test
-		start();
-	}, 1000);
+	ok($('#name').length, ' name input is present');
+	ok($('#password').length, ' name input is present');
+	equal($('#back').css('display'), 'none');
+	equal($('#next').css('display'), 'none');
+	state = $('#contain').detach();  // save the state of the inside of qunit-fixture for the next test
+	start();
 });
 
 asyncTest('Credentials', function(){
@@ -280,9 +278,9 @@ asyncTest('Credentials', function(){
 		// credentials are correct, so quiz div should now be present
 		ok($('#quiz').length, 'quiz div is present');
 		equal($('#next').css('display'), 'inline-block', 'Next button needs to be displayed');
-		state = $('#qunit-fixture').find("*");
+		state = $('#contain').detach();
 		start();
-	}, 1000);
+	}, 600);
 });
 
 asyncTest('Back and next button', function(){
@@ -299,7 +297,7 @@ asyncTest('Back and next button', function(){
 		start();
 		
 		
-	}, 1000);
+	}, 600);
 	
 });
 

@@ -1,0 +1,7 @@
+<div class="question" id="question">{{text}}</div>
+	{{#each choices}}
+	<div>
+  		<input type="radio" name="answer" class="answer" {{userAnswer .. i=@index}} id="{{@index}}" />
+  		<label for="{{@index}}" id="{{@index}}_label">{{this}}</label>
+  	</div>
+ 	{{/each}}

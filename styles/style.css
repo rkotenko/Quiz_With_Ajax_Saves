@@ -1,9 +1,9 @@
-.answer{
-    overflow: hidden;
-}
-
 body > div{
 	width: 500px;
+}
+
+body input[type="text"]{
+	float: right;
 }
 
 #next{
@@ -14,18 +14,6 @@ body > div{
 	text-align: center;
 }
 
-.main {
-    width: 500px;
-    overflow: hidden;
-}
-
-.selected {
-    background-color: blue;
-}
-
-.login input{
-	float: right;
-}
 
 
 

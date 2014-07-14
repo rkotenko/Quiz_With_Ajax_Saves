@@ -6,14 +6,31 @@
 	<body>
 		<div id="qunit"></div>
   		<div id="qunit-fixture">
-  			<div id="main"></div>
-			<div id="navigation">
-				<button id="back" type="button">Back</button>
-				<button id="next" type="button">Next</button>		
+  			<div id="contain">
+  				<div id="main">
+  					<div id="login">
+						<div id="error"></div>
+						<div>
+							<label for="name">Name: <input type="text" name="name" id="name" />
+						</div>
+						<div>
+							<label for="password">Password: <input type="text" name="password" id="password" />
+						</div>
+						<button type="button" id="login_button">Login</button>
+					</div>
+  				</div>
+				<div id="navigation">
+					<button id="back" type="button">Back</button>
+					<button id="next" type="button">Next</button>		
+				</div>
 			</div>
   		</div>
   		<script src="//code.jquery.com/qunit/qunit-1.14.0.js"></script>
+  		<script src="scripts/handlebars.runtime-v1.3.0.js"></script>
   		<script src="scripts/jquery.js"></script>
+  		<script src="templates/quiz.template"></script>
+		<script src="templates/question.template"></script>
+		<script src="templates/results.template"></script>
   		<script src="scripts/objects.js"></script>
   		<script src="scripts/questions.json"></script>
   		<script src="scripts/functions.js"></script>

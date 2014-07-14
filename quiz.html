@@ -1,18 +1,30 @@
+<!DOCTYPE HTML>
 <html>
 	<head>
 		<title>Quiz time</title>
 		<link rel="stylesheet" type="text/css" href="styles/style.css">
 	</head>
 	<body>
-		<div id="main"></div>
+		<div id="main">
+			<div id="login">
+				<div id="error"></div>
+				<div>
+					<label for="name">Name: <input type="text" name="name" id="name" />
+				</div>
+				<div>
+					<label for="password">Password: <input type="text" name="password" id="password" />
+				</div>
+				<button type="button" id="login_button">Login</button>
+			</div>
+		</div>
 		<div id="navigation">
 			<button id="back" type="button">Back</button>
 			<button id="next" type="button">Next</button>		
 		</div>
 	</body>
 	<script src="scripts/jquery.js"></script>
+	<script src="scripts/handlebars.runtime-v1.3.0.js"></script>
 	<script src="scripts/questions.json"></script>
-	<script src="scripts/objects.js" ></script>
-	<script src="scripts/functions.js" ></script>
+	<script src="templates/master_template.js"></script>
 	<script src="scripts/quiz.js" ></script>
 </html>
