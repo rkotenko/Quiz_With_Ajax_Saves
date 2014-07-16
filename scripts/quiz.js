@@ -1,13 +1,16 @@
 var quiz;
-
-startQuiz();
+var questions;
 
 /*************** FUNCTIONS **********************/
 
-var quiz;
-var questions;
-
 function checkCredentials(){
+		var test = true;
+		
+		if(test){
+			quiz = new Quiz();
+			quiz.nextQuestion();
+			return;
+		}
 		// check the login against what is stored in localStorage.  COMPLETELY unsafe but this is just
 		// to experiement with localStorage since I have never used it for anything
 		if($('#password').val() == localStorage.getItem($('#name').val())){
@@ -29,29 +32,6 @@ function checkCredentials(){
 		
 }
 
-function startQuiz(){
-	
-	// turn off jquery effects for testing.  They don't need to be tested. That way I don't have to run async tests.  That means faster tests.
-	// faster tests equals YAY FOR ME!
-	$.fx.off = true;
-
-	// hide the back and next buttons
-	next = $('#next');
-	back = $('#back');
-	loginButton = $('#login_button');
-	next.css('display', 'none');
-	back.css('display', 'none');
-
-	// add the events to login, back, and next
-	next.click(function(){
-		quiz.nextQuestion();
-	});
-	back.click(function(){
-		quiz.previousQuestion();
-	});
-	loginButton.click(checkCredentials);
-}
-
 /*********************** Handlebar Helper Functions *************************/
 
 Handlebars.registerHelper('userAnswer', function(question, options){
@@ -71,12 +51,28 @@ Handlebars.registerPartial('oneQuestion', Handlebars.templates.question);
 */
 function User(name){
 	this.name = name;	
+	this.scores = this.loadScores();
 }
 
 User.prototype = {
 	constructor: User,
 	getName: function() {
 		return this.name;
+	},
+	loadScores: function(){
+		$.ajax({
+			url: 'scores/scores.php',
+			data: {name: this.name, type: 'getUserScores'},
+			success: $.proxy(function(result){
+				if(result){
+					this.scores = JSON.parse(result);
+				}
+			}, this)
+		});
+	},
+	displayScores: function(){ 
+		var html = Handlebars.templates.userScores({scores: this.scores});
+		$('#main').append($(html));
 	}
 };
 
@@ -193,12 +189,14 @@ Quiz.prototype = {
 		topScores is of the format [{name: "name", score: "score"}, {name: "name", score: "scores"}
 */
 function TopScores() {
-	this.topScores = this.getTopScores();  
+	this.topScores = '';
+	this.scoreFile = 'top.scores';
 }
 
 TopScores.prototype = {
+	constructor: TopScores,
 	getTopScores: function(){
-
+		// ajax
 	},
 	checkScore: function(){
 
@@ -207,8 +205,36 @@ TopScores.prototype = {
 
 	},
 	saveScores: function(){
-		
+		// ajax	
 	}
 };
+
+// Controller function.  Encapsulated so it can be unit tested easily.
+function startQuiz(){
+	// Add some effect and do some setup.  Everything else is user interaction
+
+	// turn off jquery effects for testing.  They don't need to be tested. That way I don't have to run async tests everywhere.  That means faster tests.
+	// faster tests equals YAY FOR ME!
+	$.fx.off = true;
+
+	// hide the back and next buttons
+	next = $('#next');
+	back = $('#back');
+	loginButton = $('#login_button');
+	next.css('display', 'none');
+	back.css('display', 'none');
+
+	// add the events to login, back, and next
+	next.click(function(){
+		quiz.nextQuestion();
+	});
+	back.click(function(){
+		quiz.previousQuestion();
+	});
+	loginButton.click(checkCredentials);	
+}
+/**************************  START IT UP!! ****************************/
+
+startQuiz();	
 
 

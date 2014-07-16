@@ -1,9 +1,3 @@
-<div id="user_scores" class="scores">
-	<div>Your past scores</div>
-	{{#each userScore}}
-	<li>{{this}}</li>
-	{{/each}}
-</div>
 <div id="top_scores" class="scores">
 	<div>Top 20 scores</div>
 	<table>
@@ -14,5 +8,6 @@
 		<tr>
 			<td>{{this.name}}</td><td>{{this.score}}</td>
 		</tr>
+		{{/each}}
 	</table>
 </div>

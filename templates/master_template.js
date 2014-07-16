@@ -62,4 +62,48 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     + "</div>\n</div>";
   return buffer;
   });
+templates['topScores'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n		<tr>\n			<td>"
+    + escapeExpression(((stack1 = (depth0 && depth0.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</td><td>"
+    + escapeExpression(((stack1 = (depth0 && depth0.score)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</td>\n		</tr>\n		";
+  return buffer;
+  }
+
+  buffer += "<div id=\"top_scores\" class=\"scores\">\n	<div>Top 20 scores</div>\n	<table>\n		<tr>\n			<th>Name</th><th>Score</th>\n		</tr>\n		";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.topScore), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n	</table>\n</div>";
+  return buffer;
+  });
+templates['userScores'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n			<li>"
+    + escapeExpression(((stack1 = (depth0 && depth0.correct)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " out of "
+    + escapeExpression(((stack1 = (depth0 && depth0.total)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</li>\n	";
+  return buffer;
+  }
+
+  buffer += "<div id=\"user_scores\" class=\"scores\">\n	<div>Your past scores</div>\n	";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.scores), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n</div>";
+  return buffer;
+  });
 })();

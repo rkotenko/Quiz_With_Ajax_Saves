@@ -1,6 +1,9 @@
 
+
 var state; // in order to test the flow of the quiz, I need to save the states so they can be passed to the next tests
 var qState;  //  a special state saved to jump right into the question
+var player,
+	topScores; // user and topscores load asynchronously.  So that each test does not have to run that async process, save them globally
 var quiz = new Quiz();
 var questions = [];
 
@@ -15,15 +18,36 @@ QUnit.config.reorder = false;
 // test on simple user object
 // future: two modules to test an existing user and a new user to test returning a score array and not finding 
 // any scores for a user
-module("User Object", {
-	setup: function() {
-		// create a user
-		player = new User('rob');
-	}
+module("User Object");
+
+asyncTest('Test Existing User', function(){
+	player = new User('Rob');
+	expected = [
+					{"correct": 4, "total": 4},
+					{"correct": 4,"total": 4},
+					{"correct": 4,"total": 4},
+					{"correct": 3,"total": 4}
+				];
+	setTimeout(function(){
+		deepEqual(player.scores, expected, 'Scores array not correct');
+		equal(player.name, 'Rob', 'player name is missing');
+		start();	
+	}, 200);
+	
 });
 
-test('get user name', function(){
-	equal(player.getName(), 'rob', 'The name was not returned');
+test('Display Past Scores', function(){
+	player.displayScores();
+	equal($('#user_scores').children(':nth-child(2)').html(), '4 out of 4', 'User scores are not displayed');
+});
+
+asyncTest('Test New User', function(){
+	player = new User('Steve');
+	setTimeout(function(){
+		equal(player.scores, undefined, 'Scores array should be undefined');
+		start();	
+	}, 200);
+	
 });
 
 module("Question Object", {
@@ -78,12 +102,27 @@ test('displayQuestion', function() {
 	equal($('#next').prop('disabled'), false, 'Next button should be enabled');	
 });
 
-test('Dislpay Top Scores', function(){
-	player.displayUserScores();
-	user_score = $('#user_score');
-	ok($('#user_score').length, 'User score div is present');
-	equal($('#user_score').children(':nth-child(2)'), '2 out of 4', 'User scores are not present');
+module('TopScores object');
+
+asyncTest('Create Top Scores Object', function(){
+	topScores = new TopScores();
+	expected = [
+					{'user': 'Rob', 'score': 4},
+					{'user': 'Steve', 'score': 4},
+					{'user': 'Steve', 'score': 3},
+					{'user': 'Rob', 'score': 3},
+					{'user': 'Steve', 'score': 2}
+				];
+
+	setTimeout(function(){
+		deepEqual(topScores.scores, expected, 'Top Scores were not loaded');
+		start();
+	}, 200);
 });
+
+/*test('checkScore', function(){
+
+});*/
 
 /*
 	Quiz Needed Tests:
@@ -221,18 +260,8 @@ for(var i = 0; i < allQuestions.length;i++){
 
 module('Main Page Test');
 
-test('startQuiz', function(){
-	startQuiz();
-	
-	ok($('#name').length, ' name input is present');
-	ok($('#password').length, ' name input is present');
-	equal($('#back').css('display'), 'none');
-	equal($('#next').css('display'), 'none');
-	state = $('#contain').detach();  // save the state of the inside of qunit-fixture for the next test
-});
-
 test('Credentials', function(){
-	$('#qunit-fixture').empty().append(state);
+	//$('#qunit-fixture').empty().append(state);
 
 	// put a user into localStorage
 	localStorage.setItem('rob', 'pass');
