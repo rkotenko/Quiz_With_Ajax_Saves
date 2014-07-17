@@ -28,6 +28,7 @@ asyncTest('Test Existing User', function(){
 					{"correct": 4,"total": 4},
 					{"correct": 3,"total": 4}
 				];
+
 	setTimeout(function(){
 		deepEqual(player.scores, expected, 'Scores array not correct');
 		equal(player.name, 'Rob', 'player name is missing');
@@ -36,6 +37,27 @@ asyncTest('Test Existing User', function(){
 	
 });
 
+asyncTest('Test save To Server', function(){
+	result = player.addNewScore({"correct": 2,"total": 4});
+
+	setTimeout(function(){
+		equal(player.saved, true, 'saveScore Ajax call did not work');
+		equal(player.name, 'Rob', 'player name is missing');
+		start();	
+	}, 200);
+	
+});
+
+// now check that the score saved above was in fact saved correctly
+asyncTest('Test that save succeeded', function(){
+	player.loadScores();
+	
+	setTimeout(function(){
+		deepEqual(player.scores[4], {"correct": 2,"total": 4}, 'addNewScore did not save');
+		start();	
+	}, 200);
+	
+});
 test('Display Past Scores', function(){
 	player.displayScores();
 	equal($('#user_scores').children(':nth-child(2)').html(), '4 out of 4', 'User scores are not displayed');
@@ -44,11 +66,12 @@ test('Display Past Scores', function(){
 asyncTest('Test New User', function(){
 	player = new User('Steve');
 	setTimeout(function(){
-		equal(player.scores, undefined, 'Scores array should be undefined');
+		deepEqual(player.scores, Array(), 'Scores array should be an empty array');
 		start();	
 	}, 200);
 	
 });
+
 
 module("Question Object", {
 	setup: function() {
@@ -107,12 +130,12 @@ module('TopScores object');
 asyncTest('Create Top Scores Object', function(){
 	topScores = new TopScores();
 	expected = [
-					{'user': 'Rob', 'score': 4},
-					{'user': 'Steve', 'score': 4},
-					{'user': 'Steve', 'score': 3},
-					{'user': 'Rob', 'score': 3},
-					{'user': 'Steve', 'score': 2}
-				];
+				{'user': 'Rob', 'score': 4},
+				{'user': 'Steve', 'score': 4},
+				{'user': 'Phil', 'score': 3},
+				{'user': 'Greg', 'score': 3},
+				{'user': 'Armin', 'score': 2}
+			];
 
 	setTimeout(function(){
 		deepEqual(topScores.scores, expected, 'Top Scores were not loaded');
@@ -120,9 +143,43 @@ asyncTest('Create Top Scores Object', function(){
 	}, 200);
 });
 
-/*test('checkScore', function(){
 
-});*/
+test('insertScore', function(){
+	var order = '';
+	score = {'user': 'Nate', 'score': 5};
+
+	// try an insert when array size is less than 20
+	topScores.insertScore(score);
+	equal(topScores.scores.length, 6, 'Score should have been inserted since top scores array only contained 5 items');
+
+	// the scores should be in the proper order from highest to lowest
+	$scores = $(topScores.scores);
+
+	$scores.each(function(){
+		order = order + this.score.toString();
+	});
+
+	equal(order, '544332', 'Score order should now be 544332');
+
+	// add some elements to the array to get it to 20
+	while(topScores.scores.length < 20){
+		topScores.scores.push(score);
+	}
+
+	// Once there are 20 scores, when a score is added, the lowest score should be removed (may be the one trying to be added)
+	score = {'user': 'Mark', 'score': 4};  
+	topScores.insertScore(score);
+	equal(topScores.scores.length, 20, 'There should be exactly 20 scores after trying to insert a new one');
+
+	deepEqual(topScores.scores[topScores.scores.length - 1], {'user': 'Greg', 'score': 3}, 'Last high score should now be greg');
+
+	score = {'user': 'Mark', 'score': 1};  
+	topScores.insertScore(score);
+	equal(topScores.scores.length, 20, 'There should be exactly 20 scores after trying to insert a new one');
+
+	deepEqual(topScores.scores[topScores.scores.length - 1], {'user': 'Greg', 'score': 3}, 'Last high score should still be Greg after a score of 1 is attempted');
+
+});
 
 /*
 	Quiz Needed Tests:
@@ -262,7 +319,7 @@ module('Main Page Test');
 
 test('Credentials', function(){
 	//$('#qunit-fixture').empty().append(state);
-
+	startQuiz();
 	// put a user into localStorage
 	localStorage.setItem('rob', 'pass');
 
@@ -305,7 +362,14 @@ test('Next question click', function(){
 	equal($('#question').html(), questions[2].text, 'Question text should be ' + questions[2].text);	
 });
 
-
+test('reset files', function(){
+	expect(0);
+	// reset the score files
+	$.ajax({
+		url: 'scores/scores.php',
+		data: {reset: true}
+	});	
+});
 
 
 

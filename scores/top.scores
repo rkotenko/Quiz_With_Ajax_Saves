@@ -1,7 +1,2 @@
-[
-	{'user': 'Rob', 'score': 4},
-	{'user': 'Steve', 'score': 4},
-	{'user': 'Steve', 'score': 3},
-	{'user': 'Rob', 'score': 3},
-	{'user': 'Steve', 'score': 2}
-]
+[{"user": "Rob", "score": 4},{"user": "Steve", "score": 4},{"user": "Phil", "score": 3},
+				  {"user": "Greg", "score": 3},{"user": "Armin", "score": 2}]

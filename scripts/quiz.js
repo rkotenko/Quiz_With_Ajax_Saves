@@ -4,7 +4,7 @@ var questions;
 /*************** FUNCTIONS **********************/
 
 function checkCredentials(){
-		var test = true;
+		var test = false;
 		
 		if(test){
 			quiz = new Quiz();
@@ -51,7 +51,8 @@ Handlebars.registerPartial('oneQuestion', Handlebars.templates.question);
 */
 function User(name){
 	this.name = name;	
-	this.scores = this.loadScores();
+	this.scores = this.loadScores() || [];
+	this.saved = false;
 }
 
 User.prototype = {
@@ -63,16 +64,28 @@ User.prototype = {
 		$.ajax({
 			url: 'scores/scores.php',
 			data: {name: this.name, type: 'getUserScores'},
-			success: $.proxy(function(result){
+			success: function(result) {
 				if(result){
 					this.scores = JSON.parse(result);
 				}
-			}, this)
+			}.bind(this)
 		});
 	},
 	displayScores: function(){ 
 		var html = Handlebars.templates.userScores({scores: this.scores});
 		$('#main').append($(html));
+	}, 
+	addNewScore: function(score){
+		// add the new score to the scores array and then save them to file
+		this.scores.push(score);
+		$.ajax({
+			url: 'scores/scores.php',
+			type: 'get',
+			data: {name: this.name, type: 'saveUserScores', data: JSON.stringify(this.scores)},
+			success: function(result) {
+				this.saved = true;
+			}.bind(this)
+		});
 	}
 };
 
@@ -114,6 +127,44 @@ Question.prototype = {
 		}
 		
 	}	
+};
+
+/*
+	Top Scores Object
+		Holds the highest 20 scores. Can set those scores to template, determine if a score should be added to the list, and add 
+		it.
+		insertScore will insert the new score and then sort by score.  If the length is greater than 20, it will remove the excess
+		to keep it at 20.  
+		topScores is of the format [{name: "name", score: "score"}, {name: "name", score: "scores"}
+*/
+function TopScores() {
+	this.scoreFile = 'top.scores';
+	this.scores = this.loadScores() || [];
+	
+}
+
+TopScores.prototype = {
+	constructor: TopScores,
+	loadScores: function(){
+		$.ajax({
+			url: 'scores/scores.php',
+			data: {type: 'getTopScores', name: this.scoreFile},
+			success: function(result){
+				if(result){
+					this.scores = JSON.parse(result);
+				}
+			}.bind(this)
+		});
+	},
+	insertScore: function(){
+
+	},
+	displayScores: function(){
+
+	},
+	saveScores: function(){
+		// ajax	
+	}
 };
 
 /*
@@ -179,33 +230,6 @@ Quiz.prototype = {
 		
 		html = Handlebars.templates.results(results);
 		$('#main').html(html);
-	}
-};
-
-/*
-	Top Scores Object
-		Holds the highest 20 scores. Can set those scorse to template, determine if a score should be added to the list, and add 
-		it
-		topScores is of the format [{name: "name", score: "score"}, {name: "name", score: "scores"}
-*/
-function TopScores() {
-	this.topScores = '';
-	this.scoreFile = 'top.scores';
-}
-
-TopScores.prototype = {
-	constructor: TopScores,
-	getTopScores: function(){
-		// ajax
-	},
-	checkScore: function(){
-
-	},
-	displayScores: function(){
-
-	},
-	saveScores: function(){
-		// ajax	
 	}
 };
 
