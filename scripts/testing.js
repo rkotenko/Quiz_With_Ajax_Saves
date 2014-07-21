@@ -1,5 +1,10 @@
 
 
+/******************** NOTE!!! ***************************/
+
+//	Be sure to run scores/scores.php?reset=true to set up the files correctly for the tests!
+
+/**********************************************************/
 var state; // in order to test the flow of the quiz, I need to save the states so they can be passed to the next tests
 var qState;  //  a special state saved to jump right into the question
 var player,
@@ -42,7 +47,6 @@ asyncTest('Test save To Server', function(){
 
 	setTimeout(function(){
 		equal(player.saved, true, 'saveScore Ajax call did not work');
-		equal(player.name, 'Rob', 'player name is missing');
 		start();	
 	}, 200);
 	
@@ -132,7 +136,7 @@ asyncTest('Create Top Scores Object', function(){
 	expected = [
 				{'user': 'Rob', 'score': 4},
 				{'user': 'Steve', 'score': 4},
-				{'user': 'Phil', 'score': 3},
+				{'user': 'Phil', 'score': 4},
 				{'user': 'Greg', 'score': 3},
 				{'user': 'Armin', 'score': 2}
 			];
@@ -159,7 +163,7 @@ test('insertScore', function(){
 		order = order + this.score.toString();
 	});
 
-	equal(order, '544332', 'Score order should now be 544332');
+	equal(order, '544432', 'Score order should now be 544432');
 
 	// add some elements to the array to get it to 20
 	while(topScores.scores.length < 20){
@@ -179,6 +183,34 @@ test('insertScore', function(){
 
 	deepEqual(topScores.scores[topScores.scores.length - 1], {'user': 'Greg', 'score': 3}, 'Last high score should still be Greg after a score of 1 is attempted');
 
+});
+
+asyncTest('saveScores', function(){
+	topScores.saveScores();
+
+	setTimeout(function(){
+		equal(topScores.saved, true, 'scores were not saved');
+		start();
+	}, 200);
+
+});
+
+// check that the save worked by reloading the top scores
+asyncTest('Check saveScores result', function(){
+	topScores.scores = [];
+	expectedFirstScore = {'user': 'Nate', 'score': 5};
+	topScores.loadScores();
+
+	setTimeout(function(){
+		deepEqual(topScores.scores[0], expectedFirstScore, 'scores were not saved');
+		start();
+	}, 200);
+
+});
+
+test('Display Top Scores', function(){
+	topScores.displayScores();
+	equal($('#0').html(), 'Nate', 'Top scores are not displayed');
 });
 
 /*
@@ -271,7 +303,7 @@ test('next question with answer set', function(){
 });
 
 // test the display result page
-test('display results: all correct', function(){
+asyncTest('display results: all correct', function(){
 	$('#qunit-fixture').empty().append(state); // set the state resulting from the previous tests
 
 	// set the all the question userAnswer to the correctAnswer
@@ -281,13 +313,23 @@ test('display results: all correct', function(){
 	quiz.current = 3;  // question 4
 	quiz.nextQuestion();
 	
-	// check that the results div has been loaded
-	ok($('#results').length, 'results div is present');
-	equal($('#num_correct').html(), '4 out of 4 correct', 'All answers are correct so this should be 4 out of 4');
-	equal($('#percent').html(), '100%', 'Should be 100%');
-	equal($('#back').css('display'), 'none');
-	equal($('#next').css('display'), 'none');
-	state = $('#contain').detach();  // save the state of the inside of qunit-fixture for the next test
+	setTimeout(function(){
+		// check that the results div has been loaded
+		ok($('#results').length, 'results div is present');
+		equal($('#num_correct').html(), '4 out of 4 correct', 'All answers are correct so this should be 4 out of 4');
+		equal($('#percent').html(), '100%', 'Should be 100%');
+
+		// check that the user past scores is loaded
+		ok($('#user_scores').length, 'user scores is not present');
+
+		// check for top scores
+		ok($('#top_scores').length, 'top scores are not here!');
+		equal($('#back').css('display'), 'none');
+		equal($('#next').css('display'), 'none');
+		state = $('#contain').detach();  // save the state of the inside of qunit-fixture for the next test	
+		start();
+	}, 1500);
+	
 });
 
 
@@ -362,14 +404,7 @@ test('Next question click', function(){
 	equal($('#question').html(), questions[2].text, 'Question text should be ' + questions[2].text);	
 });
 
-test('reset files', function(){
-	expect(0);
-	// reset the score files
-	$.ajax({
-		url: 'scores/scores.php',
-		data: {reset: true}
-	});	
-});
+
 
 
 

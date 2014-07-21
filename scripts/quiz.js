@@ -1,5 +1,6 @@
-var quiz;
-var questions;
+var quiz,
+	questions,
+	player;
 
 /*************** FUNCTIONS **********************/
 
@@ -8,6 +9,8 @@ function checkCredentials(){
 		
 		if(test){
 			quiz = new Quiz();
+			player = new User();
+			topScores = new TopScores();
 			quiz.nextQuestion();
 			return;
 		}
@@ -23,6 +26,8 @@ function checkCredentials(){
 											allQuestions[i].correctAnswer);
 			}
 			quiz = new Quiz();
+			player = new User($('#name').val());
+			topScores = new TopScores();
 			quiz.nextQuestion();	
 		}
 		else{
@@ -63,7 +68,7 @@ User.prototype = {
 	loadScores: function(){
 		$.ajax({
 			url: 'scores/scores.php',
-			data: {name: this.name, type: 'getUserScores'},
+			data: {name: this.name + '.scores', type: 'get'},
 			success: function(result) {
 				if(result){
 					this.scores = JSON.parse(result);
@@ -73,7 +78,7 @@ User.prototype = {
 	},
 	displayScores: function(){ 
 		var html = Handlebars.templates.userScores({scores: this.scores});
-		$('#main').append($(html));
+		$('#main').append(html);
 	}, 
 	addNewScore: function(score){
 		// add the new score to the scores array and then save them to file
@@ -81,7 +86,7 @@ User.prototype = {
 		$.ajax({
 			url: 'scores/scores.php',
 			type: 'get',
-			data: {name: this.name, type: 'saveUserScores', data: JSON.stringify(this.scores)},
+			data: {name: this.name + '.scores', type: 'put', data: JSON.stringify(this.scores)},
 			success: function(result) {
 				this.saved = true;
 			}.bind(this)
@@ -148,7 +153,7 @@ TopScores.prototype = {
 	loadScores: function(){
 		$.ajax({
 			url: 'scores/scores.php',
-			data: {type: 'getTopScores', name: this.scoreFile},
+			data: {type: 'get', name: this.scoreFile},
 			success: function(result){
 				if(result){
 					this.scores = JSON.parse(result);
@@ -156,14 +161,30 @@ TopScores.prototype = {
 			}.bind(this)
 		});
 	},
-	insertScore: function(){
+	insertScore: function(score){
+		this.scores.push(score);
+		this.scores.sort(function(a, b){
+			return b.score - a.score;
+		});
 
+		if(this.scores.length > 20){
+			this.scores.pop();
+		}
 	},
 	displayScores: function(){
-
+		var html = Handlebars.templates.topScores({topScores: this.scores});
+		$('#main').append(html);
 	},
 	saveScores: function(){
-		// ajax	
+		$.ajax({
+			url: 'scores/scores.php',
+			data: {type: 'put', name: this.scoreFile, data: JSON.stringify(this.scores)},
+			success: function(result){
+				if(result){
+					this.saved = true;
+				}
+			}.bind(this)
+		});	
 	}
 };
 
@@ -228,8 +249,18 @@ Quiz.prototype = {
 			percentCorrect: (correct.length / questions.length) * 100 + '%'
 		};
 		
+		// add the score
+		player.addNewScore({"correct": correct.length,"total": questions.length});
+
+		// add the score to the top scores and then save the topscores
+		topScores.insertScore({"user":player.name,"score": correct.length});
+		topScores.saveScores();
+
+		// and load the html
 		html = Handlebars.templates.results(results);
 		$('#main').html(html);
+		player.displayScores();
+		topScores.displayScores();
 	}
 };
 

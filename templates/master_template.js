@@ -70,8 +70,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n		<tr>\n			<td>"
-    + escapeExpression(((stack1 = (depth0 && depth0.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+  buffer += "\n		<tr>\n			<td id=\""
+    + escapeExpression(((stack1 = (data == null || data === false ? data : data.index)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">"
+    + escapeExpression(((stack1 = (depth0 && depth0.user)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</td><td>"
     + escapeExpression(((stack1 = (depth0 && depth0.score)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</td>\n		</tr>\n		";
@@ -79,7 +81,7 @@ function program1(depth0,data) {
   }
 
   buffer += "<div id=\"top_scores\" class=\"scores\">\n	<div>Top 20 scores</div>\n	<table>\n		<tr>\n			<th>Name</th><th>Score</th>\n		</tr>\n		";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.topScore), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.topScores), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n	</table>\n</div>";
   return buffer;

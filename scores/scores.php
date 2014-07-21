@@ -1,5 +1,5 @@
 <?php
-	$topScores = '[{"user": "Rob", "score": 4},{"user": "Steve", "score": 4},{"user": "Phil", "score": 3},
+	$topScores = '[{"user": "Rob", "score": 4},{"user": "Steve", "score": 4},{"user": "Phil", "score": 4},
 				  {"user": "Greg", "score": 3},{"user": "Armin", "score": 2}]';
 
 	$robScores = '[{"correct": 4, "total": 4},{"correct": 4,"total": 4},
@@ -7,37 +7,22 @@
 
 	if($_GET['reset']){
 		// reset the files back to original state for testing.
+
+		array_map('unlink', glob("*.scores"));
 		file_put_contents('Rob.scores', $robScores);
 		file_put_contents('top.scores', $topScores);
+
 		echo ' files reset';
 	}
-	if($_GET['type'] == 'saveUserScores')
+	elseif($_GET['type'] == 'put')
 	{	
-		if(file_put_contents($_GET['name'] . '.scores', $_GET['data']))
-		{
-			echo 'score ok';
-		}
-		else
-		{
-			echo 'fail!';
-		}
-
-		exit;
+		file_put_contents($_GET['name'], $_GET['data']);
+		echo 'file saved';
+		
 	}
-	elseif($_GET['type'] == 'saveTopScores')
+	elseif($_GET['type'] == 'get')
 	{	
-
-		exit;
-	}
-	elseif($_GET['type'] == 'getUserScores')
-	{	
-		echo file_get_contents($_GET['name'] . '.scores');
-	}
-	elseif ($_GET['type'] == 'getTopScores') 
-	{
 		echo file_get_contents($_GET['name']);
 	}
 
-	
-	
 ?>
