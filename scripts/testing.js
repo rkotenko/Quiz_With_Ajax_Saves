@@ -223,13 +223,16 @@ test('Display Top Scores', function(){
 
 		Quiz tests are NOT atomic.  They depend on the state of the previous tests to continue with navigation.  So the
 		state is saved globally and then reinserted for the next test
+
+		CHANGE:  It may be in fact, that I can make them atomic.  The display function always checks for the presence of the needed
+		html.  If not there, it inserts it.  So I believe use of previous states might be unecessary.
 */
 
 module("Quiz Object");
 
 
 
-// the first question will run an asynchronous load
+
 test('Load first question', function(){
 	back = $('#back');
 	next = $('#next');
