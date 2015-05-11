@@ -1,9 +1,13 @@
 body > div{
-	width: 500px;
+	width: 300px;
 }
 
 body input[type="text"]{
 	float: right;
+}
+
+#login div {
+	margin-bottom: 5px;
 }
 
 #next{
