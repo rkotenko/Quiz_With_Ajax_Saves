@@ -15,7 +15,7 @@ function checkCredentials(){
 			return;
 		}
 		// check the login against what is stored in localStorage.  COMPLETELY unsafe but this is just
-		// to experiement with localStorage since I have never used it for anything
+		// to experiment with localStorage since I have never used it for anything
 		if($('#password').val() == localStorage.getItem($('#name').val())){
 			// load the questions
 			questions = [];
